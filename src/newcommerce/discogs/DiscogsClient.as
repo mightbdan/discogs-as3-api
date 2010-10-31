@@ -12,6 +12,9 @@
 	import flash.net.NetConnection;
 	import flash.utils.ByteArray;
 	import newcommerce.discogs.data.DCArtistData;
+	import newcommerce.discogs.data.DCReleaseData;
+	import newcommerce.discogs.events.DiscogsArtistEvent;
+	import newcommerce.discogs.events.DiscogsReleaseEvent;
 
 	/**
 	 * ...
@@ -51,31 +54,58 @@
 			_conn.connect(_proxyUrl);
 		}
 		
-		public function getReleases(artistName:String):Number
+		public function getArtist(artistName:String):Number
 		{
 			var url:String = _baseUrl;
-			url += "artist/" + encodeURI(artistName);			
+			url += "artist/" + encodeURI(artistName);
 			
 			var getVars:Array = ["f=xml",
 								 "rand=" + Math.random(),
 								 "api_key=" + apiKey];
+								 
+			var headers:Array = ["Accept-Encoding: gzip"];
 			
-			var responder:Responder = new Responder(doReleases, doFault);
+			var responder:Responder = new Responder(doArtist, doFault);
 			var wrapper:Object = getWrapper(responder, "getReleases");
 
-			placeCall(url, wrapper.id, responder, "GET", getVars);
+			placeCall(url, wrapper.id, responder, "GET", getVars, null, headers);
 
 			return wrapper.id;
 		}
 		
-		protected function doReleases(result:Object):void
+		protected function doArtist(result:Object):void
 		{			
 			var wrapper:Object = getWrapperFromResult(result);
 			var xml:XML = new XML(result.content);
-			var artist:DCArtistData = DCArtistData.fromXML(xml.artist);
-			dispatchEvent(new DiscogsReleaseEvent(DiscogsReleaseEvent.RELEASES_RECEIVED, artist));	
+			var artist:DCArtistData = DCArtistData.fromXML(xml.artist[0]);
+			dispatchEvent(new DiscogsArtistEvent(DiscogsArtistEvent.ARTIST_INFO_RECEIVED, artist, wrapper.id));	
 		}
 		
+		public function getRelease(releaseId:Number):Number
+		{
+			var url:String = _baseUrl;
+			url += "release/" + releaseId;
+			
+			var getVars:Array = ["f=xml",
+			                     "api_key=" + apiKey];
+								 
+			var headers:Array = ["Accept-Encoding: gzip"];
+								
+			var responder:Responder = new Responder(doRelease, doFault);
+			var wrapper:Object = getWrapper(responder, "getRelease");
+			
+			placeCall(url, wrapper.id, responder, "GET", getVars, null, headers);
+			
+			return wrapper.id;
+		}
+		
+		public function doRelease(result:Object):void
+		{
+			var wrapper:Object = getWrapperFromResult(result);
+			var xml:XML = new XML(result.content);
+			var release:DCReleaseData = DCReleaseData.fromXML(xml.release[0]);
+			dispatchEvent(new DiscogsReleaseEvent(DiscogsReleaseEvent.RELEASE_RECEIVED, release, wrapper.id));
+		}
 		
 		protected function placeCall(url:String, id:Number, responder:Responder, method:String = "GET", getVars:Array = null, postVars:Array = null, headers:Array = null):void
 		{

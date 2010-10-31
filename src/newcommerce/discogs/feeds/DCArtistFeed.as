@@ -1,47 +1,46 @@
-﻿package newcommerce.discogs.feeds 
+package newcommerce.discogs.feeds 
 {
-	import newcommerce.discogs.data.DCLabelSummary;
-	
+	import newcommerce.discogs.data.DCArtistSummary;
 	/**
 	 * ...
 	 * @author Martin Legris ( http://blog.martinlegris.com )
 	 */
-	public class DCLabelFeed 
+	public class DCArtistFeed
 	{
-		protected var _xml:XML;
-		protected var _pointer:Number = 0;
-		protected var _nodeName:String = "label";
+		public var _xml:XML;
+		public var _pointer:Number = 0;
+		public var _nodeName:String = "artist";
 		
-		public function DCLabelFeed(xml:XML) 
+		public function DCArtistFeed(xml:XML) 
 		{
 			if (xml == null)
-				xml = new XML("<labels></labels>");
+				xml = new XML("<artists></artists>");
 				
 			_xml = xml;
 			_pointer = 0;
 		}
-		
+
 		public function get count():Number
 		{
 			return _xml.child(_nodeName).length();
 		}
 		
-		public function getAt(idx:Number):DCLabelSummary
+		public function getAt(idx:Number):DCArtistSummary
 		{
 			if (idx >= 0 && idx < count)
-				return DCLabelSummary.fromXML(_xml.child(_nodeName)[idx]);
+				return DCArtistSummary.fromXML(_xml.child(_nodeName)[idx]);
 			else
 			{
 				return null;
 			}
 		}
 		
-		public function first():DCLabelSummary
+		public function first():DCArtistSummary
 		{
 			return getAt(_pointer = 0);
 		}
 		
-		public function next():DCLabelSummary
+		public function next():DCArtistSummary
 		{
 			if (_pointer < count)
 				return getAt(_pointer++);
@@ -52,7 +51,7 @@
 			}
 		}
 		
-		public function previous():DCLabelSummary
+		public function previous():DCArtistSummary
 		{
 			if (_pointer >= 0)
 				return getAt(_pointer--);
@@ -63,11 +62,9 @@
 			}
 		}
 		
-		public function last():DCLabelSummary
+		public function last():DCArtistSummary
 		{
 			return getAt(_pointer = count - 1);
 		}
-		
 	}
-	
 }

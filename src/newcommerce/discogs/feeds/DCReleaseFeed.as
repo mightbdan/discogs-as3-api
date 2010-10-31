@@ -14,6 +14,9 @@
 		
 		public function DCReleaseFeed(xml:*) 
 		{
+			if (xml == null)
+				xml = new XML("<releases></releases>");
+				
 			_xml = xml;
 			_pointer = 0;
 		}

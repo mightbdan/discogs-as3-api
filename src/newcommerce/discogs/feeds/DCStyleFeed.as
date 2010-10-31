@@ -1,21 +1,20 @@
-﻿package newcommerce.discogs.feeds 
+package newcommerce.discogs.feeds 
 {
-	import newcommerce.discogs.data.DCLabelSummary;
-	
+	import newcommerce.discogs.data.DCStyleData;
 	/**
 	 * ...
 	 * @author Martin Legris ( http://blog.martinlegris.com )
 	 */
-	public class DCLabelFeed 
+	public class DCStyleFeed
 	{
 		protected var _xml:XML;
 		protected var _pointer:Number = 0;
-		protected var _nodeName:String = "label";
+		protected var _nodeName:String = "style";
 		
-		public function DCLabelFeed(xml:XML) 
+		public function DCStyleFeed(xml:XML) 
 		{
 			if (xml == null)
-				xml = new XML("<labels></labels>");
+				xml = new XML("<styles></styles>");
 				
 			_xml = xml;
 			_pointer = 0;
@@ -26,22 +25,22 @@
 			return _xml.child(_nodeName).length();
 		}
 		
-		public function getAt(idx:Number):DCLabelSummary
+		public function getAt(idx:Number):DCStyleData
 		{
 			if (idx >= 0 && idx < count)
-				return DCLabelSummary.fromXML(_xml.child(_nodeName)[idx]);
+				return DCStyleData.fromXML(_xml.child(_nodeName)[idx]);
 			else
 			{
 				return null;
 			}
 		}
 		
-		public function first():DCLabelSummary
+		public function first():DCStyleData
 		{
 			return getAt(_pointer = 0);
 		}
 		
-		public function next():DCLabelSummary
+		public function next():DCStyleData
 		{
 			if (_pointer < count)
 				return getAt(_pointer++);
@@ -52,7 +51,7 @@
 			}
 		}
 		
-		public function previous():DCLabelSummary
+		public function previous():DCStyleData
 		{
 			if (_pointer >= 0)
 				return getAt(_pointer--);
@@ -63,11 +62,9 @@
 			}
 		}
 		
-		public function last():DCLabelSummary
+		public function last():DCStyleData
 		{
 			return getAt(_pointer = count - 1);
 		}
-		
 	}
-	
 }
