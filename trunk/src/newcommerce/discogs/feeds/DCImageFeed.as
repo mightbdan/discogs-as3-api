@@ -8,13 +8,17 @@
 	 */
 	public class DCImageFeed 
 	{
-		protected var _xml:*;
+		protected var _xml:XML;
 		protected var _pointer:Number = 0;
 		protected var _nodeName:String = "image";
 		
-		public function DCImageFeed(xml:*) 
+		public function DCImageFeed(xml:XML) 
 		{
+			if (xml == null)
+				xml = new XML("<images></images>");
+			
 			_xml = xml;
+				
 			_pointer = 0;
 		}
 		

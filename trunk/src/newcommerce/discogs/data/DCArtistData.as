@@ -56,8 +56,8 @@
 				memberArr.push(xml.members.name[i].text());
 			}
 			
-			data.images = new DCImageFeed(xml.images);
-			data.releases = new DCReleaseFeed(xml.releases);
+			data.images = new DCImageFeed(xml.images[0]);
+			data.releases = new DCReleaseFeed(xml.releases[0]);
 			
 			return data;
 		}
