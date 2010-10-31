@@ -37,7 +37,7 @@
 		protected var _conn:NetConnection;		
 		protected var _proxyUrl:String = "http://www.martinlegris.com/amf3/gateway.php";
 		
-		public static var apiKey:String = "e2b01ed60a";
+		public static var apiKey:String = "yourKey";
 		protected var _baseUrl:String = "http://www.discogs.com/";
 		protected var _requestQueue:Array;
 		protected var _requestSequence:Number = 0;		
