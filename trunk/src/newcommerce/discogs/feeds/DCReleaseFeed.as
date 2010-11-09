@@ -67,6 +67,22 @@
 		{
 			return getAt(_pointer = count - 1);
 		}
+		
+		public function getById(id:Number):DCReleaseSummary
+		{
+			var lastPointer:Number = _pointer;
+			var summary:DCReleaseSummary;
+			first();
+			while (summary = next())
+			{
+				if (summary.id == id)
+					break;
+			}
+			
+			_pointer = lastPointer;
+			
+			return summary;
+		}
 	}
 	
 }
