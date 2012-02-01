@@ -1,18 +1,18 @@
-﻿package newcommerce.discogs.feeds 
+package newcommerce.discogs.feeds 
 {
+	import newcommerce.discogs.data.DCMasterData;
 	import newcommerce.discogs.data.DCReleaseSummary;
-	
 	/**
 	 * ...
 	 * @author Martin Legris ( http://blog.martinlegris.com )
 	 */
-	public class DCReleaseFeed 
+	public class DCMasterFeed 
 	{
 		protected var _xml:*;
 		protected var _pointer:Number = 0;
-		protected var _nodeName:String = "release";
+		protected var _nodeName:String = "master";
 		
-		public function DCReleaseFeed(xml:*) 
+		public function DCMasterFeed(xml:*) 
 		{
 			if (xml == null)
 				xml = new XML("<releases></releases>");
@@ -26,22 +26,20 @@
 			return _xml.child(_nodeName).length();
 		}
 		
-		public function getAt(idx:Number):DCReleaseSummary
+		public function getAt(idx:Number):DCMasterData
 		{
 			if (idx >= 0 && idx < count)
-				return DCReleaseSummary.fromXML(_xml.child(_nodeName)[idx]);
+				return DCMasterData.fromXML(_xml.child(_nodeName)[idx]);
 			else
-			{
 				return null;
-			}
 		}
 		
-		public function first():DCReleaseSummary
+		public function first():DCMasterData
 		{
 			return getAt(_pointer = 0);
 		}
 		
-		public function next():DCReleaseSummary
+		public function next():DCMasterData
 		{
 			if (_pointer < count)
 				return getAt(_pointer++);
@@ -52,37 +50,36 @@
 			}
 		}
 		
-		public function previous():DCReleaseSummary
+		public function previous():DCMasterData
 		{
 			if (_pointer >= 0)
 				return getAt(_pointer--);
 			else
 			{
-				_pointer = count - 1;
+				_pointer = count -1;
 				return null;
 			}
 		}
 		
-		public function last():DCReleaseSummary
+		public function last():DCMasterData
 		{
 			return getAt(_pointer = count - 1);
 		}
 		
-		public function getById(id:Number):DCReleaseSummary
+		public function getById(id:Number):DCMasterData
 		{
 			var lastPointer:Number = _pointer;
-			var summary:DCReleaseSummary = null;
+			var master:DCMasterData = null;
 			first();
-			while (summary = next())
+			while (master = next())
 			{
-				if (summary.id == id)
+				if (master.id == id)
 					break;
 			}
 			
 			_pointer = lastPointer;
 			
-			return summary;
+			return master;
 		}
 	}
-	
 }

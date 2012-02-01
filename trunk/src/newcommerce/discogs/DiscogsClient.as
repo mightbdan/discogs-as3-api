@@ -15,6 +15,7 @@
 	import newcommerce.discogs.data.DCReleaseData;
 	import newcommerce.discogs.events.DiscogsArtistEvent;
 	import newcommerce.discogs.events.DiscogsReleaseEvent;
+	import org.json.JSON;
 
 	/**
 	 * ...
@@ -37,8 +38,8 @@
 		protected var _conn:NetConnection;		
 		protected var _proxyUrl:String = "http://www.martinlegris.com/amf3/gateway.php";
 		
-		public static var apiKey:String = "yourKey";
-		protected var _baseUrl:String = "http://www.discogs.com/";
+		//public static var apiKey:String = "e2b01ed60a";
+		protected var _baseUrl:String = "http://api.discogs.com/";
 		protected var _requestQueue:Array;
 		protected var _requestSequence:Number = 0;		
 		
@@ -56,14 +57,16 @@
 		
 		public function getArtist(artistName:String):Number
 		{
+			if (artistName.toLowerCase().indexOf("the") == 0)
+				artistName = artistName.substr(4) + ", The";
+				
+			trace("discogs.getArtist(" + artistName + ")");
+			
 			var url:String = _baseUrl;
 			url += "artist/" + encodeURI(artistName);
 			
-			var getVars:Array = ["f=xml",
-								 "rand=" + Math.random(),
-								 "api_key=" + apiKey];
-								 
-			var headers:Array = ["Accept-Encoding: gzip"];
+			var getVars:Array = ["rand=" + Math.random(), "releases=1"];
+			var headers:Array = ["Accept-Encoding: gzip", "Accept: application/xml;q=0.9,*/*;q=0.8" ];
 			
 			var responder:Responder = new Responder(doArtist, doFault);
 			var wrapper:Object = getWrapper(responder, "getReleases");
@@ -74,11 +77,35 @@
 		}
 		
 		protected function doArtist(result:Object):void
-		{			
+		{	
+			//trace("doArtist rawContent:" + result.content);
+			
+			var headers:String = result.header;
+			var content:String = result.content;			
+			// var json:Object = JSON.deserialize(content);
+			
+			// traceObject(json);
+			
+			//trace("doArtist stringContent:" + content);
+			
+			if (result.httpCode == 404)
+			{
+				trace("artist not found on discogs");
+				return;
+			}
+				
 			var wrapper:Object = getWrapperFromResult(result);
 			var xml:XML = new XML(result.content);
 			var artist:DCArtistData = DCArtistData.fromXML(xml.artist[0]);
 			dispatchEvent(new DiscogsArtistEvent(DiscogsArtistEvent.ARTIST_INFO_RECEIVED, artist, wrapper.id));	
+		}
+		
+		private function traceObject(o:Object):void
+		{
+			trace('traceObject\n');
+			for (var val:* in o)
+				trace('   [' + typeof(o[val]) + '] ' + val + ' => ' + o[val]);
+			trace('\n');
 		}
 		
 		public function getRelease(releaseId:Number):Number
@@ -86,8 +113,7 @@
 			var url:String = _baseUrl;
 			url += "release/" + releaseId;
 			
-			var getVars:Array = ["f=xml",
-			                     "api_key=" + apiKey];
+			var getVars:Array = [];
 								 
 			var headers:Array = ["Accept-Encoding: gzip"];
 								
