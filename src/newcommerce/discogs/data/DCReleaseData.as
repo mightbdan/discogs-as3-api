@@ -65,7 +65,12 @@
 		
 		public static function fromXML(xml:XML):DCReleaseData
 		{
+			trace("release xml:" + xml);
 			var data:DCReleaseData = new DCReleaseData();
+			
+			if (xml == null)
+				return data;
+				
 			data.id = xml.@id.toString();
 			data.status = xml.@status.toString();
 			data.title = xml.title.toString();
