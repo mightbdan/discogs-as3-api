@@ -1,0 +1,1 @@
+An ActionScript 3 API for the data on Discogs. Limited to fetching information on releases at the moment.
